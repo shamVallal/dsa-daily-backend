@@ -1,0 +1,30 @@
+name: Daily DSA Email Sender
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # Runs at 8:30 AM IST (3 AM UTC)
+  workflow_dispatch:     # Manual run button in Actions tab
+
+jobs:
+  send-emails:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run scheduler
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: node scheduler.js
